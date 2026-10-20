@@ -164,4 +164,45 @@
                 <input type="email" id="email" name="email" placeholder="example@email.com" required>
             </div>
 
-            <button type="submit" id
+            <button type="submit" id="submitBtn">ส่งข้อมูล</button>
+        </form>
+    </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbymVRE4cEzuO2uuam4kvuLFcJKN9ClUakbSr3TwmYhYtVRjWrWuifkAijDqC9bhZ3il/exec';
+        const form = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'กำลังส่งข้อมูล...';
+
+            const formData = new URLSearchParams();
+            formData.append('phone', form.phone.value);
+            formData.append('email', form.email.value);
+
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData.toString()
+            })
+            .then(() => {
+                alert('บันทึกข้อมูลเรียบร้อยแล้ว!');
+                form.reset();
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'ส่งข้อมูล';
+            })
+            .catch(error => {
+                alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'ส่งข้อมูล';
+            });
+        });
+    </script>
+
+</body>
+</html>
