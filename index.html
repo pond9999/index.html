@@ -23,7 +23,6 @@
             overflow: hidden;
         }
 
-        /* แสงสะท้อนสีนุ่มนวลด้านหลังเพื่อความโปร่งมิติของ Liquid Glass บนพื้นขาว */
         .background-glow-1 {
             position: absolute;
             width: 400px;
@@ -46,7 +45,6 @@
             z-index: 1;
         }
 
-        /* Glass Card คลีนๆ โทนสีขาว */
         .glass-card {
             position: relative;
             z-index: 2;
@@ -118,7 +116,6 @@
             box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
         }
 
-        /* ปุ่มสีฟ้า Apple Style */
         button[type="submit"] {
             width: 100%;
             padding: 16px;
@@ -140,10 +137,10 @@
             transform: translateY(-1px);
         }
 
-        button[type="submit"]:active {
-            background: #0062c4;
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(0, 113, 227, 0.2);
+        button[type="submit"]:disabled {
+            background: #a1a1a6;
+            cursor: not-allowed;
+            box-shadow: none;
         }
     </style>
 </head>
@@ -156,7 +153,7 @@
         <h2>กรอกข้อมูลติดต่อ</h2>
         <p class="subtitle">ระบุข้อมูลของท่านเพื่อบันทึกในระบบ</p>
 
-        <form action="https://formspree.io/f/xdeavyvo" method="POST">
+        <form id="contactForm">
             <div class="input-group">
                 <label for="phone">เบอร์โทรศัพท์</label>
                 <input type="tel" id="phone" name="phone" placeholder="08X-XXX-XXXX" pattern="[0-9]{9,10}" title="กรุณากรอกเบอร์โทรศัพท์ตัวเลข 9-10 หลัก" required>
@@ -167,9 +164,46 @@
                 <input type="email" id="email" name="email" placeholder="example@email.com" required>
             </div>
 
-            <button type="submit">ส่งข้อมูล</button>
+            <button type="submit" id="submitBtn">ส่งข้อมูล</button>
         </form>
     </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbx2B4e3WWdY3KVAXDD6AaUiWrO3RaByHwIp2IBC4HNmDgjtSosSHJjKbN-pusooZtKm/exec';
+        const form = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'กำลังส่งข้อมูล...';
+
+            const data = {
+                phone: form.phone.value,
+                email: form.email.value
+            };
+
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(() => {
+                alert('บันทึกข้อมูลเรียบร้อยแล้ว!');
+                form.reset();
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'ส่งข้อมูล';
+            })
+            .catch(error => {
+                alert('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง');
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'ส่งข้อมูล';
+            });
+        });
+    </script>
 
 </body>
 </html>
